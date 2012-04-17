@@ -6,19 +6,20 @@
 //  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
 //
 
+#ifndef _ROOTC_
+#define _ROOTC_
+
 #import <UIKit/UIKit.h>
 #import "ButtonViewController.h"
 #import "MapViewController.h"
 #import "CategoryViewController.h"
+#import <CoreLocation/CoreLocation.h>
 
-@interface RootController : UIViewController {
-  /*
-  ButtonViewController *buttonViewController;
-  MapViewController *mapViewController;
-  CategoryViewController *categoryViewController;
-  
-  UINavigationController *navigationController;
-   */
+@interface RootController : UIViewController<CLLocationManagerDelegate> {
+  CLLocationManager *locationManager;
+  float latitude;
+  float longitude;
+  BOOL locationSet;
 }
 
 @property (nonatomic, retain) ButtonViewController *buttonViewController;
@@ -27,3 +28,5 @@
 @property (nonatomic, retain) UINavigationController *navigationController;
 
 @end
+
+#endif

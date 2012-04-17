@@ -6,8 +6,20 @@
 //  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
 //
 
+#import <CoreLocation/CoreLocation.h>
 #import "RootController.h"
 #import "ASIHTTPRequest.h"
+#import "SBJson.h"
+
+#define GoogleAPIKey @"AIzaSyDQWO6d3uFsjjeBEllD6C3bGhbX3-11GRM"
+#define SearchRadius 2000
+
+NSString *placesTypes[4] = {
+  @"restaurant",
+  @"cafe",
+  @"movie_theater",
+  @"shopping"
+};
 
 @interface RootController ()
 @end
@@ -30,15 +42,42 @@
   //[self.view addSubview:buttonViewController.view];
   [self initWithNibName:nil bundle:nil];
   
+  // Location settings
+  locationSet = FALSE;
+  locationManager = [[CLLocationManager alloc] init];
+  locationManager.delegate = self;
+  locationManager.distanceFilter = kCLDistanceFilterNone;
+  locationManager.desiredAccuracy = kCLLocationAccuracyBest;
+  [locationManager startUpdatingLocation];
+  
   return self;
 }
+
+/*
+ * Set the current location using Location Manager
+ */
+- (void)locationManager:(CLLocationManager *)manager
+    didUpdateToLocation:(CLLocation *)newLocation
+           fromLocation:(CLLocation *)oldLocation
+{
+  if (locationSet) {
+    return;
+  }
+  locationSet = TRUE;
+  latitude = newLocation.coordinate.latitude;
+  longitude = newLocation.coordinate.longitude;
+  [locationManager stopUpdatingLocation];
+  
+  [[NSNotificationCenter defaultCenter] postNotificationName:@"locationSet" object:nil userInfo:nil];
+  
+  NSLog(@"New location: %f %f", latitude, longitude);
+}
+
+
 - (void)viewDidLoad
 {
   NSLog(@"view loaded");
   [super viewDidLoad];
-  //[self addChildViewController:buttonViewController];
-  //[self presentViewController:buttonViewController animated:FALSE completion:nil];
-	// Do any additional setup after loading the view.
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -47,7 +86,32 @@
 }
   
 - (void)buttonPressed {
-  NSURL *url = [NSURL URLWithString:@"http://pastebin.com/raw.php?i=sZvM9Kj0"];
+  
+  // If the current location isn't set, wait for it
+  if (!locationSet) {
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(buttonPressed) name:@"locationSet" object:nil];
+    return;
+  }
+  
+  [self searchForPlaces];
+}
+
+- (void)searchForPlaces {
+  // Google places URL
+  NSMutableString *types = [NSMutableString string];
+  for (int i=0; i<4; i++) {
+    [types appendString:placesTypes[i]];
+    if (i < 3) {
+      [types appendString:@"%7c"]; // Pipe
+    }
+  }
+  NSString *format = @"https://maps.googleapis.com/maps/api/place/search/json?key=%@&location=%f,%f&radius=%d&sensor=false&types=%@";
+  NSString *urlString = [NSString stringWithFormat:format,GoogleAPIKey,latitude,longitude,SearchRadius,types];
+  NSURL *url = [NSURL URLWithString:urlString];
+  
+  NSLog(@"%@", urlString);
+  
+  // Launching the HTTP request
   ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:url];
   [request setDelegate:self];
   [request startAsynchronous];
@@ -55,20 +119,45 @@
 
 - (void)requestFinished:(ASIHTTPRequest *)request
 {
-  return;
   // Use when fetching text data
   NSString *responseString = [request responseString];
-  NSLog(responseString);
+  NSLog(@"%@", responseString);
   
   // Use when fetching binary data
   NSData *responseData = [request responseData];
+  SBJsonParser *jsonParser = [[SBJsonParser alloc] init];
+  NSDictionary *json = [jsonParser objectWithData:responseData];
+  NSDictionary *results = [json objectForKey:@"results"];
+  
+  if (![[json objectForKey:@"status"] isEqualToString:@"OK"]
+      || [results count] == 0) {
+    NSLog(@"Error in request");
+    NSString *message = ([results count] == 0)
+                      ? @"Can't find any good places round you, please try again somewhere else !"
+                      : @"Can't connect to Google Places";
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"resetButton" object:nil userInfo:nil];
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error"
+                                                    message:message
+                                                   delegate:self
+                                          cancelButtonTitle:@"Ok"
+                                          otherButtonTitles:nil,nil];
+    [alert show];
+    return;
+  }
+  
+  [self handleResults:results];
+}
+
+- (void) handleResults:(NSDictionary *)results {
+  categoryViewController = [[CategoryViewController alloc] init];  
+  [navigationController pushViewController:categoryViewController animated:TRUE];
 }
 
 - (void)requestFailed:(ASIHTTPRequest *)request
 {
-  return;
   NSLog(@"Error");
   NSError *error = [request error];
+  NSLog(@"%@", [error localizedDescription]);
 }
 
 - (void)viewDidUnload

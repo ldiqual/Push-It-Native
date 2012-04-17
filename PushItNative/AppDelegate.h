@@ -9,8 +9,6 @@
 #import <UIKit/UIKit.h>
 #import "RootController.h"
 
-#define GoogleAPIKey
-
 @interface AppDelegate : UIResponder <UIApplicationDelegate> {
   RootController *rootController;
 }
