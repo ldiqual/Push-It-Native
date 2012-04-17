@@ -20,6 +20,7 @@
   float latitude;
   float longitude;
   BOOL locationSet;
+  NSMutableDictionary *results;
 }
 
 @property (nonatomic, retain) ButtonViewController *buttonViewController;

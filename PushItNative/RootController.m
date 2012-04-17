@@ -11,15 +11,9 @@
 #import "ASIHTTPRequest.h"
 #import "SBJson.h"
 
-#define GoogleAPIKey @"AIzaSyDQWO6d3uFsjjeBEllD6C3bGhbX3-11GRM"
-#define SearchRadius 2000
-
-NSString *placesTypes[4] = {
-  @"restaurant",
-  @"cafe",
-  @"movie_theater",
-  @"shopping"
-};
+#define GOOGLE_API_KEY @"AIzaSyDQWO6d3uFsjjeBEllD6C3bGhbX3-11GRM"
+#define SEARCH_RADIUS 2000
+#define CATEGORIES_NUMBER 4
 
 @interface RootController ()
 @end
@@ -31,10 +25,21 @@ NSString *placesTypes[4] = {
 @synthesize categoryViewController;
 @synthesize navigationController;
 
+# pragma mark -
+# pragma mark Program methods
+
 - (id)init {
   NSLog(@"rootcontroller");
   
+  // Button pressure event
   [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(buttonPressed) name:@"buttonPressed" object:nil];
+  
+  // Categories
+  results = [[NSMutableDictionary alloc] init];
+  [results setObject:[[NSMutableArray alloc] init] forKey:@"movie_theater"];
+  [results setObject:[[NSMutableArray alloc] init] forKey:@"cafe"];
+  [results setObject:[[NSMutableArray alloc] init] forKey:@"shopping"];
+  [results setObject:[[NSMutableArray alloc] init] forKey:@"restaurant"];
   
   buttonViewController = [[ButtonViewController alloc] init];
   navigationController = [[UINavigationController alloc] init];
@@ -52,6 +57,47 @@ NSString *placesTypes[4] = {
   
   return self;
 }
+
+- (void)searchForPlaces {
+  
+  // Google places URL
+  int i = 0;
+  NSMutableString *types = [NSMutableString stringWithString:@""];
+  for (NSString *category in [results allKeys]) {
+    [types appendString:category];
+    if (i < [results count] - 1) {
+      [types appendString:@"%7c"]; // Pipe
+    }
+  }
+  
+  NSString *format = @"https://maps.googleapis.com/maps/api/place/search/json?key=%@&location=%f,%f&radius=%d&sensor=false&types=%@";
+  NSString *urlString = [NSString stringWithFormat:format,GOOGLE_API_KEY,latitude,longitude,SEARCH_RADIUS,types];
+  NSURL *url = [NSURL URLWithString:urlString];
+  
+  // Launching the HTTP request
+  ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:url];
+  [request setDelegate:self];
+  [request startAsynchronous];
+}
+
+- (void) handlePlaceResults:(NSDictionary *)data {
+  [self setResultsByCategories:data];
+  categoryViewController = [[CategoryViewController alloc] initWithResults:results];
+  [navigationController pushViewController:categoryViewController animated:TRUE];
+}
+
+- (void) setResultsByCategories:(NSDictionary *)data {
+  for (NSDictionary *place in data) {
+    for (NSString *category in [results allKeys]) {
+      if ([[place objectForKey:@"types"] containsObject:category]) {
+        [[results objectForKey:category] addObject:place];
+      }
+    }
+  }
+}
+
+#pragma mark -
+#pragma mark CLLocationManager methods
 
 /*
  * Set the current location using Location Manager
@@ -72,18 +118,6 @@ NSString *placesTypes[4] = {
   
   NSLog(@"New location: %f %f", latitude, longitude);
 }
-
-
-- (void)viewDidLoad
-{
-  NSLog(@"view loaded");
-  [super viewDidLoad];
-}
-
-- (void)viewDidAppear:(BOOL)animated {
-  [navigationController pushViewController:buttonViewController animated:FALSE];
-  [self presentViewController:navigationController animated:FALSE completion:nil];
-}
   
 - (void)buttonPressed {
   
@@ -96,43 +130,29 @@ NSString *placesTypes[4] = {
   [self searchForPlaces];
 }
 
-- (void)searchForPlaces {
-  // Google places URL
-  NSMutableString *types = [NSMutableString string];
-  for (int i=0; i<4; i++) {
-    [types appendString:placesTypes[i]];
-    if (i < 3) {
-      [types appendString:@"%7c"]; // Pipe
-    }
-  }
-  NSString *format = @"https://maps.googleapis.com/maps/api/place/search/json?key=%@&location=%f,%f&radius=%d&sensor=false&types=%@";
-  NSString *urlString = [NSString stringWithFormat:format,GoogleAPIKey,latitude,longitude,SearchRadius,types];
-  NSURL *url = [NSURL URLWithString:urlString];
-  
-  NSLog(@"%@", urlString);
-  
-  // Launching the HTTP request
-  ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:url];
-  [request setDelegate:self];
-  [request startAsynchronous];
-}
+
+
+
+# pragma mark -
+# pragma mark ASIHttpRequest methods
 
 - (void)requestFinished:(ASIHTTPRequest *)request
 {
+  /*
   // Use when fetching text data
   NSString *responseString = [request responseString];
-  NSLog(@"%@", responseString);
-  
+  */
+   
   // Use when fetching binary data
   NSData *responseData = [request responseData];
   SBJsonParser *jsonParser = [[SBJsonParser alloc] init];
   NSDictionary *json = [jsonParser objectWithData:responseData];
-  NSDictionary *results = [json objectForKey:@"results"];
+  NSDictionary *data = [json objectForKey:@"results"];
   
   if (![[json objectForKey:@"status"] isEqualToString:@"OK"]
-      || [results count] == 0) {
+      || [data count] == 0) {
     NSLog(@"Error in request");
-    NSString *message = ([results count] == 0)
+    NSString *message = ([data count] == 0)
                       ? @"Can't find any good places round you, please try again somewhere else !"
                       : @"Can't connect to Google Places";
     [[NSNotificationCenter defaultCenter] postNotificationName:@"resetButton" object:nil userInfo:nil];
@@ -145,19 +165,29 @@ NSString *placesTypes[4] = {
     return;
   }
   
-  [self handleResults:results];
+  [self handlePlaceResults:data];
 }
 
-- (void) handleResults:(NSDictionary *)results {
-  categoryViewController = [[CategoryViewController alloc] init];  
-  [navigationController pushViewController:categoryViewController animated:TRUE];
-}
 
 - (void)requestFailed:(ASIHTTPRequest *)request
 {
   NSLog(@"Error");
   NSError *error = [request error];
   NSLog(@"%@", [error localizedDescription]);
+}
+
+# pragma mark -
+# pragma mark UIViewController methods
+
+- (void)viewDidLoad
+{
+  NSLog(@"view loaded");
+  [super viewDidLoad];
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+  [navigationController pushViewController:buttonViewController animated:FALSE];
+  [self presentViewController:navigationController animated:FALSE completion:nil];
 }
 
 - (void)viewDidUnload

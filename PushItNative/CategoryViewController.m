@@ -14,62 +14,98 @@
 
 @implementation CategoryViewController
 @synthesize tableView;
+@synthesize tabBar;
+
+#pragma mark -
+#pragma mark Custom methods
+
+- (id)initWithResults:(NSDictionary *)resultsDic
+{
+  results = resultsDic;
+  currentCategory = @"restaurant";
+  NSLog(@"CategoryViewController init");
+  [self initWithNibName:@"CategoryView" bundle:nil];
+  
+  categoriesName[0] = @"restaurant";
+  categoriesName[1] = @"movie_theater";
+  categoriesName[2] = @"shopping";
+  categoriesName[3] = @"cafe";
+  
+  return self;
+}
+
+- (void)updateBadges {
+  for (int i=0; i<[tabBar.items count]; i++) {
+    UITabBarItem *item = [tabBar.items objectAtIndex:i];
+    int count = [[results objectForKey:categoriesName[i]] count];
+    [item setBadgeValue:[NSString stringWithFormat:@"%d", count]];
+  }
+}
+
+#pragma mark -
+#pragma mark UITabBarDelegate methods
+
+- (void)tabBar:(UITabBar *)tabBarArg didSelectItem:(UITabBarItem *)item 
+{ 
+  [tabBar setSelectedItem:[tabBar.items objectAtIndex:item.tag]];
+  currentCategory = categoriesName[item.tag];
+  [tableView reloadData];
+  NSLog(@"Tab selected: %@", currentCategory);
+} 
+
 
 #pragma mark -
 #pragma mark UITableViewDataSource methods
 
-- (NSInteger)tableView:(UITableView *)tableView 
+- (NSInteger)tableView:(UITableView *)tableView
  numberOfRowsInSection:(NSInteger)section {
-  return 10;
+  return [[results objectForKey:currentCategory] count];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableViewArg 
          cellForRowAtIndexPath:(NSIndexPath *)indexPath {
   
-  // Identifier for retrieving reusable cells.
-  static NSString *cellIdentifier = @"MyCellIdentifier";
-  
-  // Attempt to request the reusable cell.
+  NSDictionary *place = [[results objectForKey:currentCategory] objectAtIndex:[indexPath indexAtPosition:1]];
+
+  NSString *cellIdentifier = [place objectForKey:@"id"];  
   UITableViewCell *cell = [tableViewArg dequeueReusableCellWithIdentifier:cellIdentifier];
   
-  // No cell available - create one.
   if (cell == nil) {
     cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault 
                                   reuseIdentifier:cellIdentifier];
+    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+    cell.textLabel.text = [place objectForKey:@"name"];
   }
   
   // Set the text of the cell to the row index.
-  cell.textLabel.text = [NSString stringWithFormat:@"%d", indexPath.row];
+  //= [NSString stringWithFormat:@"%d", [indexPath indexAtPosition:0]];
   
   return cell;
 }
 
-
 #pragma mark -
 #pragma mark UIViewController methods
 
-- (id)init
-{
-  NSLog(@"CategoryViewController init");
-  [self initWithNibName:@"CategoryView" bundle:nil];
-  return self;
-}
-
 - (void)viewDidLoad
 {
-    [super viewDidLoad];
+  [super viewDidLoad];
+  [tabBar setSelectedItem:[tabBar.items objectAtIndex:0]];
+  [self updateBadges];
+  
 	// Do any additional setup after loading the view.
 }
 
 - (void)viewDidUnload
 {
     [self setTableView:nil];
+  [self setTabBar:nil];
     [super viewDidUnload];
     // Release any retained subviews of the main view.
 }
 
 - (void)dealloc {
     [tableView release];
+  [tabBar release];
     [super dealloc];
 }
 @end
