@@ -36,6 +36,7 @@
 
 - (id)init {
   NSLog(@"rootcontroller");
+  [self initWithNibName:nil bundle:nil];
   
   // Button pressure event
   [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(buttonPressed) name:@"buttonPressed" object:nil];
@@ -53,10 +54,14 @@
   
   buttonViewController = [[ButtonViewController alloc] init];
   mapViewController = [[MapViewController alloc] init];
+  mapViewController.title = @"Push It";
+  
+  // Navigation controller
   navigationController = [[UINavigationController alloc] init];
   [navigationController setNavigationBarHidden:YES animated:FALSE];
-  //[self.view addSubview:buttonViewController.view];
-  [self initWithNibName:nil bundle:nil];
+  navigationController.delegate = self;
+  
+  NSLog(@"%@", [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleName"]);
   
   // Location settings
   locationSet = FALSE;
@@ -121,9 +126,22 @@
   [annotation setTitle:[place objectForKey:@"name"]];
   [annotation setSubtitle:[place objectForKey:@"vicinity"]];
   
+  [mapViewController resetInternalAnnotations];
   [mapViewController addAnnotation:annotation];
   
   [navigationController pushViewController:mapViewController animated:TRUE];
+  [navigationController setNavigationBarHidden:FALSE animated:TRUE];
+}
+
+#pragma mark -
+#pragma mark UINavigationControllerDelegate methods
+
+- (void)navigationController:(UINavigationController *)navigationControllerArg
+      willShowViewController:(UIViewController *)viewController
+                    animated:(BOOL)animated {
+  if (viewController == categoryViewController) {
+    [navigationController setNavigationBarHidden:TRUE animated:TRUE];
+  }
 }
 
 #pragma mark -
@@ -160,19 +178,11 @@
   [self searchForPlaces];
 }
 
-
-
-
 # pragma mark -
 # pragma mark ASIHttpRequest methods
 
 - (void)requestFinished:(ASIHTTPRequest *)request
-{
-  /*
-  // Use when fetching text data
-  NSString *responseString = [request responseString];
-  */
-   
+{   
   // Use when fetching binary data
   NSData *responseData = [request responseData];
   SBJsonParser *jsonParser = [[SBJsonParser alloc] init];

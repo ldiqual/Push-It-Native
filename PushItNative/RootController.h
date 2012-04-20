@@ -15,7 +15,7 @@
 #import "CategoryViewController.h"
 #import <CoreLocation/CoreLocation.h>
 
-@interface RootController : UIViewController<CLLocationManagerDelegate> {
+@interface RootController : UIViewController<CLLocationManagerDelegate, UINavigationControllerDelegate> {
   CLLocationManager *locationManager;
   float latitude;
   float longitude;

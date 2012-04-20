@@ -15,9 +15,11 @@
   BOOL userLocated;
 }
 @property (retain, nonatomic) IBOutlet MKMapView *mapView;
+@property (retain, nonatomic) IBOutlet UIBarButtonItem *goButtonItem;
+@property (retain, nonatomic) IBOutlet UIBarButtonItem *previousButtonItem;
 
 - (id)init;
-- (void)resetAnnotations;
+- (void)resetInternalAnnotations;
 - (void)addAnnotation:(MapAnnotation *)annotation;
 - (void)addAnnotations:(NSArray *)annotationsArg;
 - (void)refreshMap;

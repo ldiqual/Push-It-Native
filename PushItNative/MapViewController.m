@@ -15,6 +15,8 @@
 
 @implementation MapViewController
 @synthesize mapView;
+@synthesize goButtonItem;
+@synthesize previousButtonItem;
 
 #pragma mark -
 #pragma mark Custom methods
@@ -26,8 +28,19 @@
   return self;
 }
 
-- (void)resetAnnotations {
-  [mapView removeAnnotations:mapView.annotations];
+- (void)resetMapAnnotations {
+  NSMutableArray *toRemove = [NSMutableArray arrayWithCapacity:10];
+  for (id annotation in mapView.annotations) {
+    if (annotation != mapView.userLocation) {
+      [toRemove addObject:annotation];
+    }
+  }
+  [mapView removeAnnotations:toRemove];
+  toRemove = nil;
+}
+
+- (void)resetInternalAnnotations {
+  [annotations removeAllObjects];
 }
 
 - (void)addAnnotation:(MapAnnotation *)annotation {
@@ -42,17 +55,10 @@
 }
 
 - (void)refreshMap {
-  [self resetAnnotations];
+  [self resetMapAnnotations];
   [mapView addAnnotations:annotations];
   if (userLocated) {
     [self zoomToFitMapAnnotations];
-  }
-}
-
-- (void)mapView:(MKMapView *)mapView didUpdateUserLocation:(MKUserLocation *)userLocation {
-  if (userLocated) {
-    [self zoomToFitMapAnnotations];
-    userLocated = TRUE;
   }
 }
 
@@ -93,17 +99,52 @@
 }
 
 #pragma mark -
+#pragma mark MKMapViewDelegate methods
+
+- (void)mapView:(MKMapView *)mapView didUpdateUserLocation:(MKUserLocation *)userLocation {
+  if (userLocated) {
+    [self zoomToFitMapAnnotations];
+    userLocated = TRUE;
+  }
+}
+
+- (MKAnnotationView *)mapView:(MKMapView *)mapViewArg viewForAnnotation:(id <MKAnnotation>)annotation {
+  if ([annotation isKindOfClass:[MapAnnotation class]]) {
+    
+    MKPinAnnotationView *annotationView = (MKPinAnnotationView *) [mapView dequeueReusableAnnotationViewWithIdentifier:((MapAnnotation *)annotation).id];
+    if (annotationView == nil) {
+      annotationView = [[MKPinAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:((MapAnnotation *)annotation).id];
+    } else {
+      annotationView.annotation = annotation;
+    }
+    
+    annotationView.enabled = YES;
+    annotationView.canShowCallout = YES;
+    annotationView.animatesDrop = YES;
+    
+    return annotationView;
+  }
+  
+  return nil; 
+}
+
+
+#pragma mark -
 #pragma mark UIViewController methods
 
 - (void)viewDidLoad
 {
   [super viewDidLoad];
   [self refreshMap];
+  goButtonItem.target = self;
+  goButtonItem.action = @selector(buttonItemPressed);
 }
 
 - (void)viewDidUnload
 {
   [self setMapView:nil];
+  [self setGoButtonItem:nil];
+  [self setPreviousButtonItem:nil];
   [super viewDidUnload];
 }
 
@@ -114,6 +155,8 @@
 
 - (void)dealloc {
   [self setMapView:nil];
+  [goButtonItem release];
+  [previousButtonItem release];
   [super dealloc];
 }
                            

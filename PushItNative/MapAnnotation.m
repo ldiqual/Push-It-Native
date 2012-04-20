@@ -12,6 +12,7 @@
 @synthesize coordinate;
 @synthesize title;
 @synthesize subtitle;
+@synthesize id;
 
 - (id)initWithCoordinate:(CLLocationCoordinate2D)coord {
   coordinate = coord;
