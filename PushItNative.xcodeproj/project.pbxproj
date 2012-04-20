@@ -36,6 +36,9 @@
 		C001111A153B637B00FB5D91 /* ButtonViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C0011119153B637B00FB5D91 /* ButtonViewController.m */; };
 		C001111D153B638900FB5D91 /* MapViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C001111C153B638900FB5D91 /* MapViewController.m */; };
 		C0011120153B639D00FB5D91 /* CategoryViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C001111F153B639D00FB5D91 /* CategoryViewController.m */; };
+		C031E0FC154216540020A816 /* icon-72.png in Resources */ = {isa = PBXBuildFile; fileRef = C031E0F9154216540020A816 /* icon-72.png */; };
+		C031E0FD154216540020A816 /* icon.png in Resources */ = {isa = PBXBuildFile; fileRef = C031E0FA154216540020A816 /* icon.png */; };
+		C031E0FE154216540020A816 /* icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = C031E0FB154216540020A816 /* icon@2x.png */; };
 		C0DE3F32153CB5B300D66E57 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C0DE3F31153CB5B300D66E57 /* CFNetwork.framework */; };
 		C0DE409F153CB88A00D66E57 /* ASIAuthenticationDialog.m in Sources */ = {isa = PBXBuildFile; fileRef = C0DE404E153CB88A00D66E57 /* ASIAuthenticationDialog.m */; };
 		C0DE40A0153CB88A00D66E57 /* ASIDataCompressor.m in Sources */ = {isa = PBXBuildFile; fileRef = C0DE4051153CB88A00D66E57 /* ASIDataCompressor.m */; };
@@ -129,6 +132,9 @@
 		C001111C153B638900FB5D91 /* MapViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MapViewController.m; sourceTree = "<group>"; };
 		C001111E153B639D00FB5D91 /* CategoryViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CategoryViewController.h; sourceTree = "<group>"; };
 		C001111F153B639D00FB5D91 /* CategoryViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CategoryViewController.m; sourceTree = "<group>"; };
+		C031E0F9154216540020A816 /* icon-72.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon-72.png"; sourceTree = "<group>"; };
+		C031E0FA154216540020A816 /* icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon.png; sourceTree = "<group>"; };
+		C031E0FB154216540020A816 /* icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon@2x.png"; sourceTree = "<group>"; };
 		C0DE3F31153CB5B300D66E57 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		C0DE404D153CB88A00D66E57 /* ASIAuthenticationDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASIAuthenticationDialog.h; sourceTree = "<group>"; };
 		C0DE404E153CB88A00D66E57 /* ASIAuthenticationDialog.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ASIAuthenticationDialog.m; sourceTree = "<group>"; };
@@ -249,6 +255,7 @@
 		C00110A6153B480900FB5D91 = {
 			isa = PBXGroup;
 			children = (
+				C031E0F8154216430020A816 /* icons */,
 				C0DE40DF153CBBDB00D66E57 /* libxml2.dylib */,
 				C0DE40D9153CBB0700D66E57 /* libz.dylib */,
 				C0DE3F31153CB5B300D66E57 /* CFNetwork.framework */,
@@ -362,6 +369,16 @@
 				C00110F7153B494200FB5D91 /* shopping.png */,
 			);
 			path = icons;
+			sourceTree = "<group>";
+		};
+		C031E0F8154216430020A816 /* icons */ = {
+			isa = PBXGroup;
+			children = (
+				C031E0F9154216540020A816 /* icon-72.png */,
+				C031E0FA154216540020A816 /* icon.png */,
+				C031E0FB154216540020A816 /* icon@2x.png */,
+			);
+			name = icons;
 			sourceTree = "<group>";
 		};
 		C0DE404C153CB88A00D66E57 /* ASIHttpRequest */ = {
@@ -564,6 +581,9 @@
 				C0011110153B5FD600FB5D91 /* ButtonView.xib in Resources */,
 				C0011112153B605600FB5D91 /* CategoryView.xib in Resources */,
 				C0011114153B60FC00FB5D91 /* MapView.xib in Resources */,
+				C031E0FC154216540020A816 /* icon-72.png in Resources */,
+				C031E0FD154216540020A816 /* icon.png in Resources */,
+				C031E0FE154216540020A816 /* icon@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
