@@ -83,6 +83,14 @@
   return cell;
 }
 
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+  NSDictionary *place = [[results objectForKey:currentCategory] objectAtIndex:[indexPath indexAtPosition:1]];
+  NSDictionary *userInfo = [[NSDictionary alloc] initWithObjectsAndKeys:place,@"place", nil];
+  [[NSNotificationCenter defaultCenter] postNotificationName:@"placeChosen"
+                                                      object:nil
+                                                    userInfo:userInfo];
+}
+
 #pragma mark -
 #pragma mark UIViewController methods
 
@@ -91,16 +99,18 @@
   [super viewDidLoad];
   [tabBar setSelectedItem:[tabBar.items objectAtIndex:0]];
   [self updateBadges];
-  
-	// Do any additional setup after loading the view.
 }
 
 - (void)viewDidUnload
 {
-    [self setTableView:nil];
+  [self setTableView:nil];
   [self setTabBar:nil];
-    [super viewDidUnload];
-    // Release any retained subviews of the main view.
+  [super viewDidUnload];
+}
+
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
+{
+  return (interfaceOrientation == UIInterfaceOrientationPortrait);
 }
 
 - (void)dealloc {

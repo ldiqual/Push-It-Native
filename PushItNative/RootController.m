@@ -6,10 +6,16 @@
 //  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
 //
 
+/*
+ * TODO: valueForKeypath
+ */
+
+
 #import <CoreLocation/CoreLocation.h>
 #import "RootController.h"
 #import "ASIHTTPRequest.h"
 #import "SBJson.h"
+#import "MapAnnotation.h"
 
 #define GOOGLE_API_KEY @"AIzaSyDQWO6d3uFsjjeBEllD6C3bGhbX3-11GRM"
 #define SEARCH_RADIUS 2000
@@ -34,6 +40,10 @@
   // Button pressure event
   [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(buttonPressed) name:@"buttonPressed" object:nil];
   
+  // Place selection event
+  [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(placeChosen:) name:@"placeChosen" object:nil];
+
+  
   // Categories
   results = [[NSMutableDictionary alloc] init];
   [results setObject:[[NSMutableArray alloc] init] forKey:@"movie_theater"];
@@ -42,6 +52,7 @@
   [results setObject:[[NSMutableArray alloc] init] forKey:@"restaurant"];
   
   buttonViewController = [[ButtonViewController alloc] init];
+  mapViewController = [[MapViewController alloc] init];
   navigationController = [[UINavigationController alloc] init];
   [navigationController setNavigationBarHidden:YES animated:FALSE];
   //[self.view addSubview:buttonViewController.view];
@@ -74,6 +85,8 @@
   NSString *urlString = [NSString stringWithFormat:format,GOOGLE_API_KEY,latitude,longitude,SEARCH_RADIUS,types];
   NSURL *url = [NSURL URLWithString:urlString];
   
+  NSLog(@"%@", url);
+  
   // Launching the HTTP request
   ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:url];
   [request setDelegate:self];
@@ -94,6 +107,23 @@
       }
     }
   }
+}
+
+- (void) placeChosen:(NSNotification *)notification {
+  // Get selected place
+  NSDictionary *place = [[notification userInfo] objectForKey:@"place"];
+  NSLog(@"Selected place: %@", [place objectForKey:@"name"]);
+  NSDictionary *location = [[place objectForKey:@"geometry"] objectForKey:@"location"];
+  
+  // Create annotation
+  CLLocationCoordinate2D coords = CLLocationCoordinate2DMake([[location objectForKey:@"lat"] floatValue], [[location objectForKey:@"lng"] floatValue]);
+  MapAnnotation *annotation = [[MapAnnotation alloc] initWithCoordinate:coords];
+  [annotation setTitle:[place objectForKey:@"name"]];
+  [annotation setSubtitle:[place objectForKey:@"vicinity"]];
+  
+  [mapViewController addAnnotation:annotation];
+  
+  [navigationController pushViewController:mapViewController animated:TRUE];
 }
 
 #pragma mark -

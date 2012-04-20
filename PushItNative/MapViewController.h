@@ -7,7 +7,19 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <MapKit/MapKit.h>
+#import "MapAnnotation.h"
 
-@interface MapViewController : UIViewController
+@interface MapViewController : UIViewController<MKMapViewDelegate> {
+  NSMutableArray *annotations;
+  BOOL userLocated;
+}
+@property (retain, nonatomic) IBOutlet MKMapView *mapView;
+
+- (id)init;
+- (void)resetAnnotations;
+- (void)addAnnotation:(MapAnnotation *)annotation;
+- (void)addAnnotations:(NSArray *)annotationsArg;
+- (void)refreshMap;
 
 @end

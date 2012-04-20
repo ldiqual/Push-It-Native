@@ -77,6 +77,7 @@
 		C0DE4106153CCA3E00D66E57 /* SBJsonUTF8Stream.m in Sources */ = {isa = PBXBuildFile; fileRef = C0DE40F9153CCA3E00D66E57 /* SBJsonUTF8Stream.m */; };
 		C0DE4107153CCA3E00D66E57 /* SBJsonWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = C0DE40FB153CCA3E00D66E57 /* SBJsonWriter.m */; };
 		C0DE410E153D581500D66E57 /* libxml2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C0DE40DF153CBBDB00D66E57 /* libxml2.dylib */; };
+		C0DE4111153E0D0700D66E57 /* MapAnnotation.m in Sources */ = {isa = PBXBuildFile; fileRef = C0DE4110153E0D0700D66E57 /* MapAnnotation.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -210,6 +211,8 @@
 		C0DE40F9153CCA3E00D66E57 /* SBJsonUTF8Stream.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SBJsonUTF8Stream.m; path = "../../../Downloads/stig-json-framework-e2a963e/Classes/SBJsonUTF8Stream.m"; sourceTree = "<group>"; };
 		C0DE40FA153CCA3E00D66E57 /* SBJsonWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SBJsonWriter.h; path = "../../../Downloads/stig-json-framework-e2a963e/Classes/SBJsonWriter.h"; sourceTree = "<group>"; };
 		C0DE40FB153CCA3E00D66E57 /* SBJsonWriter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SBJsonWriter.m; path = "../../../Downloads/stig-json-framework-e2a963e/Classes/SBJsonWriter.m"; sourceTree = "<group>"; };
+		C0DE410F153E0D0700D66E57 /* MapAnnotation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MapAnnotation.h; sourceTree = "<group>"; };
+		C0DE4110153E0D0700D66E57 /* MapAnnotation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MapAnnotation.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -299,6 +302,8 @@
 				C001111F153B639D00FB5D91 /* CategoryViewController.m */,
 				C001111B153B638900FB5D91 /* MapViewController.h */,
 				C001111C153B638900FB5D91 /* MapViewController.m */,
+				C0DE410F153E0D0700D66E57 /* MapAnnotation.h */,
+				C0DE4110153E0D0700D66E57 /* MapAnnotation.m */,
 				C00110BC153B480900FB5D91 /* Supporting Files */,
 			);
 			path = PushItNative;
@@ -634,6 +639,7 @@
 				C0DE4105153CCA3E00D66E57 /* SBJsonTokeniser.m in Sources */,
 				C0DE4106153CCA3E00D66E57 /* SBJsonUTF8Stream.m in Sources */,
 				C0DE4107153CCA3E00D66E57 /* SBJsonWriter.m in Sources */,
+				C0DE4111153E0D0700D66E57 /* MapAnnotation.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
