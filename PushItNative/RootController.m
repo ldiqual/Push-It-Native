@@ -35,7 +35,6 @@
 # pragma mark Program methods
 
 - (id)init {
-  NSLog(@"rootcontroller");
   [self initWithNibName:nil bundle:nil];
   
   // Button pressure event
@@ -60,8 +59,6 @@
   navigationController = [[UINavigationController alloc] init];
   [navigationController setNavigationBarHidden:YES animated:FALSE];
   navigationController.delegate = self;
-  
-  NSLog(@"%@", [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleName"]);
   
   // Location settings
   locationSet = FALSE;
@@ -90,8 +87,6 @@
   NSString *urlString = [NSString stringWithFormat:format,GOOGLE_API_KEY,latitude,longitude,SEARCH_RADIUS,types];
   NSURL *url = [NSURL URLWithString:urlString];
   
-  NSLog(@"%@", url);
-  
   // Launching the HTTP request
   ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:url];
   [request setDelegate:self];
@@ -117,7 +112,6 @@
 - (void) placeChosen:(NSNotification *)notification {
   // Get selected place
   NSDictionary *place = [[notification userInfo] objectForKey:@"place"];
-  NSLog(@"Selected place: %@", [place objectForKey:@"name"]);
   NSDictionary *location = [[place objectForKey:@"geometry"] objectForKey:@"location"];
   
   // Create annotation
@@ -163,8 +157,6 @@
   [locationManager stopUpdatingLocation];
   
   [[NSNotificationCenter defaultCenter] postNotificationName:@"locationSet" object:nil userInfo:nil];
-  
-  NSLog(@"New location: %f %f", latitude, longitude);
 }
   
 - (void)buttonPressed {
@@ -211,7 +203,7 @@
 
 - (void)requestFailed:(ASIHTTPRequest *)request
 {
-  NSLog(@"Error");
+  NSLog(@"Error in request");
   NSError *error = [request error];
   NSLog(@"%@", [error localizedDescription]);
 }
@@ -221,7 +213,6 @@
 
 - (void)viewDidLoad
 {
-  NSLog(@"view loaded");
   [super viewDidLoad];
 }
 
@@ -233,7 +224,6 @@
 - (void)viewDidUnload
 {
   [super viewDidUnload];
-  // Release any retained subviews of the main view.
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation

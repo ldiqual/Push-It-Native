@@ -18,7 +18,6 @@
 
 - (id)init
 {
-  NSLog(@"ButtonViewController init");
   [self initWithNibName:@"ButtonView" bundle:nil];
   [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(resetButton) name:@"resetButton" object:nil];
   return self;
@@ -51,7 +50,6 @@
 
 - (void)viewDidLoad
 {
-  NSLog(@"ButtonViewController viewDidLoad");
   [super viewDidLoad];
   spinnerImageView.hidden = YES;
 	// Do any additional setup after loading the view.

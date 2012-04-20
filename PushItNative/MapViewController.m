@@ -44,7 +44,6 @@
 }
 
 - (void)addAnnotation:(MapAnnotation *)annotation {
-  NSLog(@"addAnnotation: %@", [annotation toString]);
   [annotations addObject:annotation];
   [self refreshMap];
 }

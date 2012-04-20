@@ -23,7 +23,6 @@
 {
   results = resultsDic;
   currentCategory = @"restaurant";
-  NSLog(@"CategoryViewController init");
   [self initWithNibName:@"CategoryView" bundle:nil];
   
   categoriesName[0] = @"restaurant";
@@ -50,7 +49,6 @@
   [tabBar setSelectedItem:[tabBar.items objectAtIndex:item.tag]];
   currentCategory = categoriesName[item.tag];
   [tableView reloadData];
-  NSLog(@"Tab selected: %@", currentCategory);
 } 
 
 
